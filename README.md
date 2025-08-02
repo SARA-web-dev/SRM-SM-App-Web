@@ -3,7 +3,7 @@ SRM-SM | Plateforme de Gestion de Stages
 Une application web moderne pour la gestion intelligente des demandes de stage avec
 analyse par intelligence artificielle.
 🚀 Fonctionnalités
-Pour les Candidats
+---------Pour les Candidats
 - ✅ Se connecter,inscription et authentification sécurisée
 - ✅ Soumission de demandes de stage avec CV et lettre de motivation
 - ✅ Suivi en temps réel du statut des demandes
@@ -12,7 +12,7 @@ Pour les Candidats
 - ✅ Modifier / Annuler demande
 - ✅ Voir ses notifications et ses emails
 - ✅ Interface responsive et moderne
-Pour les Administrateurs
+---------Pour les Administrateurs
 - ✅ Dashboard de gestion des demandes
 - ✅ Filtrage et recherche avancée
 - ✅ Prise de décision (accepter/rejeter)
@@ -22,7 +22,7 @@ Pour les Administrateurs
 - ✅ Ajouter commentaire
 - ✅ Voir ses notifications
 - ✅ Envoyer un message
-Intelligence Artificielle
+---------Intelligence Artificielle
 - 🤖 Analyse automatique des CV (extraction de texte PDF)
 - 🎯 Classification par domaine de compétences
 - 📊 Calcul de score de compatibilité
