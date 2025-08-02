@@ -110,7 +110,7 @@ défaut sont :
 Email : admin@srm-sm.ma
 Mot de passe : admin123
 Email
-Email 'asrmsm1@gmail.com', mot de passe : "admin1234."
+Email 'asrmsm1@gmail.com', 
 envoi automatiquement par candidat après décision de l’admin
 📊 Base de Données
 Tables principales
