@@ -18,6 +18,10 @@ Pour les Administrateurs
 - ✅ Prise de décision (accepter/rejeter)
 - ✅ Visualisation des scores ML
 - ✅ Export des données
+- ✅ Statistiques en temps réel
+- ✅ Ajouter commentaire
+- ✅ Voir ses notifications
+- ✅ Envoyer un message
 Intelligence Artificielle
 - 🤖 Analyse automatique des CV (extraction de texte PDF)
 - 🎯 Classification par domaine de compétences
@@ -26,10 +30,7 @@ Intelligence Artificielle
 - ⏱️ Estimation de l'expérience professionnelle
 🏗 Architecture
 ```
-- ✅ Statistiques en temps réel
-- ✅ Ajouter commentaire
-- ✅ Voir ses notifications
-- ✅ Envoyer un message
+
 SRM-SM_Stage_App/
 ├── database/
 │ └── gestion_stages.sql # Base de données MySQL
