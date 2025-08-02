@@ -8,7 +8,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script> 
+
 </head>
 <body>
     <!-- Loading Screen -->
@@ -39,8 +41,9 @@
                         </a>
                         <a href="#" id="navDemandes" class="nav-link">
                             <i class="fas fa-file-alt"></i>
-                            Demandes
-                        </a>
+                            Demandes messages 
+                        </a> 
+                        
                         <a href="#" id="navProfil" class="nav-link">
                             <i class="fas fa-user"></i>
                             Profil
@@ -63,7 +66,7 @@
                     </button>
                 </div>
             </div>
-        </header>
+        </header> 
 
         <!-- Auth Container -->
         <div id="authContainer" class="auth-container">
@@ -90,11 +93,11 @@
                     <button id="btnConnexion" class="tab-btn" data-tab="connexion">
                         <i class="fas fa-sign-in-alt"></i>
                         Connexion
-                    </button>
+                    </button><!--
                     <button id="btnAdmin" class="tab-btn" data-tab="admin">
                         <i class="fas fa-user-shield"></i>
                         Administration
-                    </button>
+                    </button>-->
                 </div>
 
                 <!-- Forms Container -->
@@ -123,9 +126,31 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="inscMotDePasse"><i class="fas fa-lock"></i> Mot de passe</label>
-                            <input type="password" id="inscMotDePasse" name="motDePasse" required minlength="6">
-                            <small>Au moins 6 caractères</small>
+                            <label for="inscMotDePasse">
+                                <i class="fas fa-lock"></i> Mot de passe
+                                <span class="password-tooltip" title="8 caractères minimum avec majuscule, minuscule, chiffre et caractère spécial">
+                                    <i class="fas fa-info-circle"></i>
+                                </span>
+                            </label>
+                            <div class="password-input-container">
+                                <input type="password" 
+                                    id="inscMotDePasse" 
+                                    name="motDePasse" 
+                                    required 
+                                    minlength="8"
+                                    pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}"
+                                    autocomplete="new-password">
+                                <button type="button" class="toggle-password" data-target="inscMotDePasse">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <small>
+                                8 caractères minimum avec : 
+                                <span class="password-requirement">A-Z</span>, 
+                                <span class="password-requirement">a-z</span>, 
+                                <span class="password-requirement">0-9</span>, 
+                                <span class="password-requirement">!@#$...</span>
+                            </small>
                         </div>
 
                         <div class="form-grid">
@@ -162,7 +187,14 @@
                                     <option value="ENSAM">ENSAM</option>
                                     <option value="ENIM">ENIM</option>
                                     <option value="EMSI">EMSI</option>
-                                    <option value="FST">FST</option>
+                                    <option value="FST">FST</option> 
+                                    <option value="EHTP">EHTP</option>
+                                    <option value="ENSMR">ENSMR</option>
+                                    <option value="EIDIA">EIDIA</option>
+                                    <option value="ISCAE">ISCAE</option>
+                                    <option value="HEM">HEM</option>
+                                    <option value="AlAkhawayn">Al Akhawayn</option>
+                                    <option value="HEEC">HEEC</option>
                                     <option value="Autres">Autres</option>
                                 </select>
                             </div>
@@ -170,12 +202,16 @@
                                 <label for="inscDomaine"><i class="fas fa-briefcase"></i> Domaine</label>
                                 <select id="inscDomaine" name="domaine" required>
                                     <option value="">-- Choisir domaine --</option>
-                                    <option value="Informatique">Informatique</option>
-                                    <option value="Gestion">Gestion</option>
-                                    <option value="électricité et électromécanique">Électricité et électromécanique</option>
-                                    <option value="Génie Civil">Génie Civil</option>
-                                    <option value="Logistique et transport">Logistique et transport</option>
-                                    <option value="Ressources humaines">Ressources humaines</option>
+                                    <option value="informatique">Informatique</option>
+                                    <option value="informatique">Réseaux & Télécoms</option>
+                                    <option value="gestion">Gestion</option>
+                                    <option value="gestion">Marketing</option>
+                                    <option value="gestion">Fiscalité</option>
+                                    <option value="gestion">Commerce</option>
+                                    <option value="électricité et électromécanique">Électricité & Électromécanique</option>
+                                    <option value="génie civil">Génie Civil</option>
+                                    <option value="logistique et transport">Logistique & Transport</option>
+                                    <option value="ressources humaines">Ressources Humaines</option>
                                     <option value="Autres">Autres</option>
                                 </select>
                             </div>
@@ -229,6 +265,10 @@
                     </form>
 
                     <!-- Connexion Admin Form -->
+
+                    <!--  http://localhost:3000/admin  --> 
+
+                    
                     <form id="formAdmin" class="auth-form">
                         <div class="form-header">
                             <h2><i class="fas fa-user-shield"></i> Connexion Administrateur</h2>
@@ -266,7 +306,7 @@
                         <h1>Bienvenue, <span id="candidatName"></span></h1>
                         <p>Gérez vos demandes de stage et suivez leur progression</p>
                     </div>
-                    <button id="btnNouvelledemande" class="primary-btn">
+                    <button id="btnNouvelleDemande" class="primary-btn">
                         <i class="fas fa-plus"></i>
                         Nouvelle demande
                     </button>
@@ -386,6 +426,22 @@
                             <p>Rejetées</p>
                         </div>
                     </div>
+                </div> 
+
+                <!-- Section Graphiques -->
+                
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-chart-line"></i> Analytics</h2>
+                    </div>
+                    <div class="analytics-grid" id="analyticsSection">
+                        <div class="chart-container">
+                            <canvas id="demandesChart" width="400" height="200"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="acceptationChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Filters -->
@@ -407,12 +463,16 @@
                             <label for="filterDomaine">Domaine</label>
                             <select id="filterDomaine">
                                 <option value="">Tous les domaines</option>
-                                <option value="Informatique">Informatique</option>
-                                <option value="Gestion">Gestion</option>
-                                <option value="électricité et électromécanique">Électricité et électromécanique</option>
-                                <option value="Génie Civil">Génie Civil</option>
-                                <option value="Logistique et transport">Logistique et transport</option>
-                                <option value="Ressources humaines">Ressources humaines</option>
+                                <option value="informatique">Informatique</option>
+                                <option value="informatique">Réseaux & Télécoms</option>
+                                <option value="gestion">Gestion</option>
+                                <option value="gestion">Marketing</option>
+                                <option value="gestion">Fiscalité</option>
+                                <option value="gestion">Commerce</option>
+                                <option value="électricité et électromécanique">Électricité & Électromécanique</option>
+                                <option value="génie civil">Génie Civil</option>
+                                <option value="logistique et transport">Logistique & Transport</option>
+                                <option value="ressources humaines">Ressources Humaines</option>
                                 <option value="Autres">Autres</option>
                             </select>
                         </div>
@@ -454,12 +514,16 @@
                             <label for="demandeDomaine"><i class="fas fa-briefcase"></i> Domaine</label>
                             <select id="demandeDomaine" name="domaine" required>
                                 <option value="">-- Choisir domaine --</option>
-                                <option value="Informatique">Informatique</option>
-                                <option value="Gestion">Gestion</option>
-                                <option value="électricité et électromécanique">Électricité et électromécanique</option>
-                                <option value="Génie Civil">Génie Civil</option>
-                                <option value="Logistique et transport">Logistique et transport</option>
-                                <option value="Ressources humaines">Ressources humaines</option>
+                                <option value="informatique">Informatique</option>
+                                <option value="informatique">Réseaux & Télécoms</option>
+                                <option value="gestion">Gestion</option>
+                                <option value="gestion">Marketing</option>
+                                <option value="gestion">Fiscalité</option>
+                                <option value="gestion">Commerce</option>
+                                <option value="électricité et électromécanique">Électricité & Électromécanique</option>
+                                <option value="génie civil">Génie Civil</option>
+                                <option value="logistique et transport">Logistique & Transport</option>
+                                <option value="ressources humaines">Ressources Humaines</option>
                                 <option value="Autres">Autres</option>
                             </select>
                         </div>
@@ -468,9 +532,10 @@
                             <select id="demandeEtablissement" name="etablissement" required>
                                 <option value="">-- Choisir établissement --</option>
                                 <option value="SRM-SM">SRM-SM</option>
-                                <option value="Autres">Autres</option>
+                                <option value="Autres">RAMSA</option>
+                                <option value="Autres">ONEE</option>
                             </select>
-                        </div>
+                        </div> 
                         <div class="form-group">
                             <label for="demandeNiveau"><i class="fas fa-graduation-cap"></i> Niveau</label>
                             <select id="demandeNiveau" name="niveau" required>
@@ -541,9 +606,172 @@
                     <i class="fas fa-times"></i>
                 </button>
             </div>
+        </div> 
+        <!-- Badge de notification -->
+        <div id="notificationBadge" class="notification-badge hidden">
+            <i class="fas fa-bell"></i>
+            <span id="notificationCount">0</span>
+        </div>
+
+        <!-- Panneau des notifications -->
+        <div id="notificationPanel" class="notification-panel hidden">
+            <div class="notification-header">
+                <h3>Notifications</h3>
+                <button onclick="NotificationService.clearNotifications()">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div id="notificationList"></div>
+        </div>
+
+         <!--  nouveau modal de messagerie -->
+        
+        <div id="messagerieModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Conversation avec le stagiaire</h3>
+                    <button id="closeModalBtn" class="close-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="messages-container" id="messagesList">
+                    <!-- Messages dynamiques ici -->
+                </div>
+
+                <div class="message-input-area">
+                    <textarea id="messageInput" placeholder="Écrire un message..." rows="3"></textarea>
+                    <button id="sendMessageBtn" class="send-btn">Envoyer</button>
+                </div>
+            </div>
         </div>
     </div>
 
+<!-- Section Mes Demandes Candidat -->
+<div id="demandesSection" class="dashboard-content hidden">
+    <div class="section-container">
+        <div class="section-header">
+            <h1><i class="fas fa-file-alt"></i> Mes messages</h1>
+            <p>Gérez toutes vos messages </p>
+        </div>
+        <div class="content-card">
+            <div id="mesDemandesList" class="demandes-list">
+                <!-- Les demandes seront chargées ici -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section Profil Candidat - VERSION CORRIGÉE -->
+<div id="profilSection" class="dashboard-content hidden">
+    <div class="section-container">
+        <div class="section-header">
+            <h1><i class="fas fa-user"></i> Mon Profil</h1>
+            <p>Vos informations personnelles</p>
+            <button id="btnEditProfile" class="primary-btn" style="margin-left: auto;">
+                <i class="fas fa-edit"></i> Modifier
+            </button>
+        </div>
+        
+        <div class="content-card">
+            <form id="formEditProfile" class="demande-form">
+                
+                <!-- PROFIL CANDIDAT COMPLET -->
+                <div id="candidatProfileFields">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Nom</label>
+                            <input type="text" id="profilNom" readonly class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Prénom</label>
+                            <input type="text" id="profilPrenom" readonly class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="profilEmail" readonly class="form-control">
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> Téléphone</label>
+                            <input type="text" id="profilTelephone" readonly class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-map-marker-alt"></i> Adresse</label>
+                            <input type="text" id="profilAdresse" readonly class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-university"></i> Établissement</label>
+                            <input type="text" id="profilEtablissement" readonly class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-briefcase"></i> Domaine</label>
+                            <input type="text" id="profilDomaine" readonly class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-graduation-cap"></i> Niveau</label>
+                            <input type="text" id="profilNiveau" readonly class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-file-pdf"></i> CV</label>
+                            <a id="profilCV" href="#" target="_blank" class="download-link">
+                                <i class="fas fa-download"></i> Télécharger mon CV
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-file-pdf"></i> Lettre de motivation</label>
+                            <a id="profilLettre" href="#" target="_blank" class="download-link">
+                                <i class="fas fa-download"></i> Télécharger ma lettre
+                            </a>
+                        </div>
+                    </div> 
+                    <div id="fileUpdateSection" class="hidden">
+                        <label>Nouveau CV (PDF)</label>
+                        <input type="file" id="editCvFile" accept=".pdf"><br>
+                        <label>Nouvelle Lettre (PDF)</label>
+                        <input type="file" id="editLettreFile" accept=".pdf">
+                    </div>
+                </div>
+
+                <!-- PROFIL ADMIN SIMPLIFIÉ -->
+                <div id="adminProfileFields" style="display: none;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Nom</label>
+                            <input type="text" id="profilNomAdmin" readonly class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" id="profilEmailAdmin" readonly class="form-control">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- BOUTONS D'ÉDITION -->
+                <div id="profileEditButtons" class="form-group hidden" style="margin-top: 2rem;">
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                    <button type="button" id="btnCancelEdit" class="secondary-btn" style="margin-left: 1rem;">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
     <script src="script.js"></script>
 </body>
 </html>
