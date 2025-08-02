@@ -10,12 +10,14 @@ const path = require('path');
 const fs = require('fs');
 const { promisify } = require('util'); 
 
-const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer'); 
+
+const helmet = require('helmet'); // Ajoutez cette ligne
 
 const transporter = nodemailer.createTransport({
   service: 'gmail', // ou autre (Outlook, etc.)
   auth: {
-    user: 'asrmsm1@gmail.com', // mot de passe : "admin1234."
+    user: 'asrmsm1@gmail.com', 
     pass: 'qxxt htix xgrv uzcb'
   }
 });
@@ -73,9 +75,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3000    ',
     'http://localhost:5500',
-    'http://127.0.0.1:5500',
+    'http://127.0.0.1:5500    ',
     null // Pour fichiers locaux ouverts directement
   ],
   credentials: true,
@@ -137,6 +139,112 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024 // 5MB
   }
 });
+
+// Configuration sécurisée de Helmet avec CSP
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      // Directives de base
+      defaultSrc: ["'self'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
+      frameAncestors: ["'self'"],
+
+      // Chargement des scripts
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",       // Nécessaire pour certains formulaires candidats
+        "'unsafe-eval'",         // Si utilisation de certaines librairies
+        "https://cdn.jsdelivr.net",
+        "https://www.gstatic.com",
+        "https://cdnjs.cloudflare.com"
+      ],
+
+      // Feuilles de style
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",       // Pour les styles dynamiques
+        "https://fonts.googleapis.com",
+        "https://cdnjs.cloudflare.com",
+        "https://www.gstatic.com"
+      ],
+
+      // Balises <link> styles
+      styleSrcElem: [
+        "'self'",
+        "https://fonts.googleapis.com",
+        "https://cdnjs.cloudflare.com",
+        "https://www.gstatic.com"
+      ],
+
+      // Polices
+      fontSrc: [
+        "'self'",
+        "data:",
+        "https://fonts.gstatic.com",
+        "https://cdnjs.cloudflare.com",
+        "https://www.gstatic.com"
+      ],
+
+      // Images et PDFs
+      imgSrc: [
+        "'self'",
+        "data:",
+        "blob:",
+        "https://www.gstatic.com",
+        "https://*.googleusercontent.com"
+      ],
+      
+      // Ajouts spécifiques pour les fichiers candidats
+      connectSrc: [
+        "'self'",
+        "http://localhost:3000",
+        "ws://localhost:3000",
+        "https://your-api-domain.com"
+      ],
+
+      // Permissions pour les PDFs
+      objectSrc: ["'self'", "blob:"], // Essentiel pour l'affichage des PDF
+      childSrc: ["'self'", "blob:"],  // Pour l'embedding de documents
+
+      // Media
+      mediaSrc: ["'self'", "data:", "blob:"], // Pour la prévisualisation
+
+      // Frames
+      frameSrc: [
+        "'self'",
+        "blob:", // Pour l'affichage des PDF
+        "https://www.google.com",
+        "https://translate.google.com"
+      ],
+
+      // Workers
+      workerSrc: ["'self'", "blob:"], // Pour le traitement des fichiers
+
+      // Manifest
+      manifestSrc: ["'self'"]
+    },
+    reportOnly: false
+  },
+  // Autres configurations de sécurité
+  crossOriginResourcePolicy: { policy: "cross-origin" }, // Modifié pour les fichiers
+  crossOriginEmbedderPolicy: { policy: "credentialless" }, // Assoupli pour les PDFs
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }, // Pour les popups de prévisualisation
+  
+  // Reste de la configuration inchangée
+  originAgentCluster: true,
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  strictTransportSecurity: {
+    maxAge: 63072000,
+    includeSubDomains: true,
+    preload: true
+  },
+  xssFilter: true,
+  noSniff: true,
+  ieNoOpen: true,
+  frameguard: { action: "deny" },
+  hidePoweredBy: true
+}));
 
 // Middleware d'authentification JWT
 function authenticateJWT(requiredRole) {
@@ -743,39 +851,100 @@ app.get('/api/admin/profil', authenticateJWT('admin'), async (req, res) => {
 // Dans ton navigateur, tape : http://localhost:3000/admin 
 
 app.get('/admin', (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8" />
-      <title>Admin - SRM-SM</title>
-      <link rel="stylesheet" href="/style.css" />
-    </head>
-    <body>
-      <script>
-        (async () => {
-          const res = await fetch('/api/admin/login', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({email:'admin@srm-sm.ma',motDePasse:'admin123'})
-          });
-          const data = await res.json();
-          if (data.token) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('userType', 'admin');
-            localStorage.setItem('userData', JSON.stringify(data.admin));
-            window.location.href = '/'; // charge index.html avec interface admin
-          } else {
-            document.body.innerHTML = '<h1>Erreur de connexion admin</h1>';
-          }
-        })();
-      </script>
-    </body>
-    </html>
-  `);
+  // Vérifier si l'utilisateur est déjà connecté en vérifiant le token dans le localStorage
+  const token = req.headers.authorization?.split(' ')[1];
+  if (token) {
+    // Utilisateur connecté, afficher l'espace admin
+    res.sendFile(path.join(__dirname, '../frontend/admin.html'));
+  } else {
+    // Utilisateur non connecté, afficher le formulaire de connexion
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="fr">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Connexion Administrateur</title>
+          <link rel="stylesheet" href="/style.css">
+          <link rel="preconnect" href="https://fonts.googleapis.com    ">
+          <link rel="preconnect" href="https://fonts.gstatic.com    " crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300    ;400;500;600;700&display=swap" rel="stylesheet">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css    ">
+      </head>
+      <body>
+          <div class="auth-container">
+              <div class="auth-background">
+                  <div class="auth-overlay"></div>
+              </div>
+              <div class="auth-content">
+                  <div class="auth-header">
+                      <div class="auth-logo">
+                          <i class="fas fa-graduation-cap"></i>
+                      </div>
+                      <h1 class="auth-title">SRM-SM</h1>
+                      <p class="auth-subtitle">Administration</p>
+                  </div>
+                  <div class="forms-container">
+                      <form id="formAdmin" class="auth-form active" enctype="multipart/form-data">
+                          <div class="form-header">
+                              <h2><i class="fas fa-user-shield"></i> Connexion Administrateur</h2>
+                              <p>Accès réservé aux administrateurs</p>
+                          </div>
+                          <div class="form-group">
+                              <label for="adminEmail"><i class="fas fa-envelope"></i> Email administrateur</label>
+                              <input type="email" id="adminEmail" name="email" required>
+                          </div>
+                          <div class="form-group">
+                              <label for="adminMotDePasse"><i class="fas fa-lock"></i> Mot de passe</label>
+                              <input type="password" id="adminMotDePasse" name="motDePasse" required>
+                          </div>
+                          <button type="submit" class="submit-btn admin-btn">
+                              <i class="fas fa-shield-alt"></i>
+                              <span>Connexion Admin</span>
+                              <div class="btn-loader hidden">
+                                  <i class="fas fa-spinner fa-spin"></i>
+                              </div>
+                          </button>
+                      </form>
+                  </div>
+              </div>
+          </div>
+          <script>
+              document.getElementById('formAdmin').addEventListener('submit', async (e) => {
+                  e.preventDefault();
+                  const email = document.getElementById('adminEmail').value;
+                  const motDePasse = document.getElementById('adminMotDePasse').value;
+
+                  try {
+                      const res = await fetch('/api/admin/login', {
+                          method: 'POST',
+                          headers: {'Content-Type': 'application/json'},
+                          body: JSON.stringify({ email, motDePasse })
+                      });
+                      const data = await res.json();
+
+                      if (data.token) {
+                          localStorage.setItem('token', data.token);
+                          localStorage.setItem('userType', 'admin');
+                          localStorage.setItem('userData', JSON.stringify(data.admin));
+                          window.location.href = '/'; // Rediriger vers l'espace admin
+                      } else {
+                          alert('Erreur de connexion: ' + data.message);
+                      }
+                  } catch (error) {
+                      console.error('Erreur lors de la connexion:', error);
+                      alert('Erreur de connexion. Veuillez réessayer.');
+                  }
+              });
+          </script>
+      </body>
+      </html>
+    `);
+  }
 });
 
 // Connexion admin
+
 app.post('/api/admin/login', async (req, res) => {
   const { email, motDePasse } = req.body;
   
@@ -827,7 +996,7 @@ app.post('/api/admin/login', async (req, res) => {
   } finally {
     if (connection) connection.release();
   }
-}); 
+});
 
 // Route analytics pour l'admin  
 app.get('/api/admin/analytics', authenticateJWT('admin'), async (req, res) => {
@@ -905,11 +1074,11 @@ app.get('/api/admin/analytics', authenticateJWT('admin'), async (req, res) => {
   }
 });
 
-// Lister toutes les demandes (admin)
+// Lister toutes les demandes (admin) 
 app.get('/api/admin/demandes', authenticateJWT('admin'), async (req, res) => {
   let connection;
   try {
-    const { statut, domaine, page = 1 } = req.query;
+    const { statut, domaine, search, page = 1 } = req.query; // Ajout de search
     const limit = 999999999; // Affiche toutes les demandes
     const offset = (page - 1) * limit;
     
@@ -938,6 +1107,11 @@ app.get('/api/admin/demandes', authenticateJWT('admin'), async (req, res) => {
       params.push(domaine);
     }
 
+    if (search) { // Ajout de la condition de recherche
+      conditions.push('(c.nom LIKE ? OR c.prenom LIKE ? OR c.email LIKE ?)');
+      params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+    }
+
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');
     }
@@ -947,14 +1121,11 @@ app.get('/api/admin/demandes', authenticateJWT('admin'), async (req, res) => {
 
     const [demandes] = await connection.query(query, params); 
 
-    //  une requête séparée pour le total
-    const [countResult] = await connection.query(
-      `SELECT COUNT(*) as total FROM DemandeStage`
-    );
-
     // Requête pour le total
     const [total] = await connection.query(
-      `SELECT COUNT(*) as total FROM DemandeStage d ${conditions.length > 0 ? 'WHERE ' + conditions.join(' AND ') : ''}`,
+      `SELECT COUNT(*) as total FROM DemandeStage d 
+       JOIN Candidat c ON d.idCandidat = c.idCandidat 
+       ${conditions.length > 0 ? 'WHERE ' + conditions.join(' AND ') : ''}`,
       params.slice(0, -2)
     ); 
 
@@ -1194,6 +1365,8 @@ app.get('/uploads/:filename', (req, res) => {
   }
 });
 
+
+
 // Servir les fichiers statiques du frontend
 app.use(express.static(path.join(__dirname, '../frontend'))); 
 
@@ -1255,4 +1428,4 @@ process.on('SIGINT', () => {
   pool.end();
   process.exit(0);
 }); 
- 
+
