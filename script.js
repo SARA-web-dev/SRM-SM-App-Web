@@ -2001,32 +2001,38 @@ class App {
     }
 
     function exportToCSV(data) {
-        if (!data.length) {
-            ToastManager.show('Aucune donnée à exporter', 'warning');
-            return;
-        }
+    if (!data.length) {
+        ToastManager.show('Aucune donnée à exporter', 'warning');
+        return;
+    }
 
-        const headers = ['Nom', 'Prénom', 'Email', 'Domaine', 'Niveau', 'Statut', 'Date'];
-        const rows = data.map(d => [
-            d.nom || '',
-            d.prenom || '',
-            d.email || '',
-            d.domaine || '',
-            d.niveau || '',
-            d.statut || '',
-            new Date(d.dateDepot).toLocaleDateString('fr-FR')
-        ]);
+    const headers = ['Nom', 'Prénom', 'Email', 'Domaine', 'Niveau', 'Statut', 'Date'];
+    const rows = data.map(d => [
+        d.nom || '',
+        d.prenom || '',
+        d.email || '',
+        d.domaine || '',
+        d.niveau || '',
+        d.statut || '',
+        new Date(d.dateDepot).toLocaleDateString('fr-FR')
+    ]);
+    
+    // Générer le contenu CSV
+    let csvContent = [headers, ...rows]
+        .map(row => row.join(';'))
+        .join('\n');
 
-        const csvContent = [headers, ...rows]
-            .map(row => row.join(';'))
-            .join('\n');
+    // Ajout du BOM UTF-8 pour éviter les problèmes d'accents
+    csvContent = '\uFEFF' + csvContent;
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `demandes_${new Date().toISOString().split('T')[0]}.csv`;
-        link.click();
-    } 
+    // Création du Blob UTF-8
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `demandes_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+}
+
     // ACTUALISER admin
     const btnRefreshAdmin = document.getElementById('btnRefreshAdmin');
     if (btnRefreshAdmin) {
@@ -2704,3 +2710,4 @@ async function loadAndShowProfil() {
 /*console.log("🔑 Token:", localStorage.getItem('token'));
 console.log("👤 User:", localStorage.getItem('userData'));
 console.log("🎭 Type:", localStorage.getItem('userType'));*/
+
